@@ -4,6 +4,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
+import { patientLoginAPI, patientRegisterAPI } from '@/apis/api'
 // import { postN, get } from '@/http'
 // import { useTheme } from 'vuetify'
 // const theme = useTheme()
@@ -93,6 +94,38 @@ const login = () => {
         router.replace('/home')
     }, 500)
 }
+const name = ref('')
+const password = ref('')
+const patientRegister = async () =>
+{
+  console.log(name.value, password.value)
+  const temp = await patientRegisterAPI(name.value, password.value);
+  if (temp.data.success)
+{
+  ElMessage({type: 'success', message: '注册成功'})
+}
+else
+{
+  ElMessage({type: 'error', message: '用户名已被使用'})
+}
+
+}
+const patientLogin = async () => 
+{
+  const temp = await patientLoginAPI(name.value, password.value)
+  console.log(name.value, password.value)
+  if (temp.data.success)
+{
+  ElMessage({type: 'success', message: '登录成功'})
+  setTimeout(()=>{
+        router.replace(`/patient/${name.value}`)
+  }, 500)
+}
+else
+{
+  ElMessage({type: 'error', message: '用户名或密码错误'})
+}
+}
 </script>
 
 
@@ -121,9 +154,9 @@ const login = () => {
               <el-form>
                 <el-form-item prop="account" label="账户">
                     <el-input
-                    v-model="form.account"
+                    v-model="name"
                     id="account-email"
-                    placeholder="Email address"
+                    placeholder="用户名"
                     size="small"  
                     class="mx-5 inputbox"
                     style="height: 35px;"
@@ -136,7 +169,7 @@ const login = () => {
                 <el-form-item prop="password" label="密码">
                     <el-input
                     :type="passwordVisible ? 'text' : 'password'"
-                    v-model="form.password"
+                    v-model="password"
                     id="password"
                     placeholder="密码"
                     size="small"  
@@ -153,9 +186,11 @@ const login = () => {
                 </el-form-item>
               </el-form>
               <div style="margin-left: 170px;margin-top: 35px;">
-                <el-button type="primary" @click="login"> 点击登录 </el-button>
+                <el-button type="primary" @click="patientRegister"> 点击注册 </el-button>
               </div>
-              
+              <div style="margin-left: 170px;margin-top: 15px;">
+                <el-button type="primary" @click="patientLogin"> 点击登录 </el-button>
+              </div>
               <!-- <v-text-field
                 id="account-email"
                 density="compact"

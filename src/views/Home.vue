@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { getPatientsAPI } from '@/apis/api';
+import { getPatientsAPI, getPictureAPI } from '@/apis/api';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -41,7 +41,15 @@ const patients = ref([])
 const getPatients = async () => {
     patients.value = getPatientsAPI().data
 }
-onMounted(()=>{getPatients()})
+const getPicture = async() => {
+  const temp = await getPictureAPI();
+  for (let i = 0; i < patients.value.length; i++)
+{
+  patients.value[i].picture = temp.data.result;
+}
+console.log(temp.data.result)
+}
+onMounted(()=>{getPatients();getPicture()})
 
 const enterPatient = () => {
     router.push('/patient')
